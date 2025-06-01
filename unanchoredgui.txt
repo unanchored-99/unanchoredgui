@@ -1,12 +1,17 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
 -- Create a new ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game:GetService("CoreGui")
+screenGui.Name = "KeySystemGui"
+screenGui.Parent = playerGui
 
 -- Create a main frame with a red background
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 300, 0, 200)
 mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-mainFrame.BackgroundColor3 = Color3.new(0.5, 0, 0) -- Red background
+mainFrame.BackgroundColor3 = Color3.new(0.5, 0, 0) -- Red
 mainFrame.Parent = screenGui
 
 -- Create a title label
@@ -26,7 +31,6 @@ keyInput.Size = UDim2.new(1, -20, 0, 50)
 keyInput.Position = UDim2.new(0, 10, 0, 60)
 keyInput.BackgroundColor3 = Color3.new(1, 1, 1)
 keyInput.TextColor3 = Color3.new(0, 0, 0)
-keyInput.Text = ""
 keyInput.PlaceholderText = "Enter key here"
 keyInput.TextSize = 20
 keyInput.Font = Enum.Font.SourceSans
@@ -47,17 +51,15 @@ submitButton.Parent = mainFrame
 local function onSubmit()
     local enteredKey = keyInput.Text
     if enteredKey == "guiunlock" then
-        -- Correct key entered, grant access
         titleLabel.Text = "Access Granted"
-        titleLabel.TextColor3 = Color3.new(0, 1, 0) -- Green text
+        titleLabel.TextColor3 = Color3.new(0, 1, 0)
         keyInput:Destroy()
         submitButton:Destroy()
     else
-        -- Incorrect key entered
         titleLabel.Text = "Incorrect Key"
-        titleLabel.TextColor3 = Color3.new(1, 0, 0) -- Red text
+        titleLabel.TextColor3 = Color3.new(1, 0, 0)
     end
 end
 
--- Connect the submit button click event to the onSubmit function
+-- Connect the button
 submitButton.MouseButton1Click:Connect(onSubmit)
