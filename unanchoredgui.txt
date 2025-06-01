@@ -1,0 +1,63 @@
+-- Create a new ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game:GetService("CoreGui")
+
+-- Create a main frame with a red background
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 200)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+mainFrame.BackgroundColor3 = Color3.new(0.5, 0, 0) -- Red background
+mainFrame.Parent = screenGui
+
+-- Create a title label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 50)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Text = "Enter Key"
+titleLabel.TextSize = 24
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Parent = mainFrame
+
+-- Create a text box for the key input
+local keyInput = Instance.new("TextBox")
+keyInput.Size = UDim2.new(1, -20, 0, 50)
+keyInput.Position = UDim2.new(0, 10, 0, 60)
+keyInput.BackgroundColor3 = Color3.new(1, 1, 1)
+keyInput.TextColor3 = Color3.new(0, 0, 0)
+keyInput.Text = ""
+keyInput.PlaceholderText = "Enter key here"
+keyInput.TextSize = 20
+keyInput.Font = Enum.Font.SourceSans
+keyInput.Parent = mainFrame
+
+-- Create a submit button
+local submitButton = Instance.new("TextButton")
+submitButton.Size = UDim2.new(1, -20, 0, 50)
+submitButton.Position = UDim2.new(0, 10, 0, 120)
+submitButton.BackgroundColor3 = Color3.new(0, 0, 0)
+submitButton.TextColor3 = Color3.new(1, 1, 1)
+submitButton.Text = "Submit"
+submitButton.TextSize = 24
+submitButton.Font = Enum.Font.SourceSansBold
+submitButton.Parent = mainFrame
+
+-- Function to check the key
+local function onSubmit()
+    local enteredKey = keyInput.Text
+    if enteredKey == "guiunlock" then
+        -- Correct key entered, grant access
+        titleLabel.Text = "Access Granted"
+        titleLabel.TextColor3 = Color3.new(0, 1, 0) -- Green text
+        keyInput:Destroy()
+        submitButton:Destroy()
+    else
+        -- Incorrect key entered
+        titleLabel.Text = "Incorrect Key"
+        titleLabel.TextColor3 = Color3.new(1, 0, 0) -- Red text
+    end
+end
+
+-- Connect the submit button click event to the onSubmit function
+submitButton.MouseButton1Click:Connect(onSubmit)
