@@ -1,193 +1,36 @@
--- Create a new ScreenGui
+-- Clear CoreGui and create a red serif-font warning screen
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+
+-- Optional: remove all CoreGui elements (use with caution)
+for _, gui in pairs(game.CoreGui:GetChildren()) do
+    if gui:IsA("ScreenGui") then
+        gui:Destroy()
+    end
+end
+
+-- Create the black screen
 local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game:GetService("CoreGui")
+screenGui.Name = "AccessDeniedUI"
 screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = game.CoreGui
 
--- Supported Games JSON URL
-local supportedGamesURL = "https://raw.githubusercontent.com/unanchored-99/unanchoredgui/refs/heads/main/supported_games.json"
+local background = Instance.new("Frame")
+background.Size = UDim2.new(1, 0, 1, 0)
+background.Position = UDim2.new(0, 0, 0, 0)
+background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BorderSizePixel = 0
+background.Parent = screenGui
 
--- Function to get game name safely
-local function getGameName()
-	local success, result = pcall(function()
-		return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-	end)
-	if success then
-		return result
-	else
-		return "Unknown Game"
-	end
-end
-
--- Function to fetch supported games list
-local function getSupportedGames()
-	local success, response = pcall(function()
-		return game:HttpGet(supportedGamesURL)
-	end)
-	if success then
-		local ok, decoded = pcall(function()
-			return game:GetService("HttpService"):JSONDecode(response)
-		end)
-		if ok then return decoded end
-	end
-	return {}
-end
-
-local supportedGames = getSupportedGames()
-local gameName = getGameName()
-local placeId = tostring(game.PlaceId)
-local isSupported = supportedGames[placeId] ~= nil
-
--- Create main frame
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 400, 0, 300)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
-mainFrame.BackgroundTransparency = 0.2
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = screenGui
-
--- Title
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, -20, 0, 40)
-titleLabel.Position = UDim2.new(0, 10, 0, 10)
-titleLabel.BackgroundTransparency = 1
-titleLabel.TextColor3 = Color3.new(1, 1, 1)
-titleLabel.Text = "unanchoredgui - " .. gameName
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Font = Enum.Font.SourceSansBold
-titleLabel.TextSize = 22
-titleLabel.Parent = mainFrame
-
--- Key input box
-local keyInput = Instance.new("TextBox")
-keyInput.Size = UDim2.new(1, -20, 0, 40)
-keyInput.Position = UDim2.new(0, 10, 0, 60)
-keyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-keyInput.TextColor3 = Color3.new(0, 0, 0)
-keyInput.PlaceholderText = "Enter key here"
-keyInput.Text = ""
-keyInput.Font = Enum.Font.SourceSans
-keyInput.TextSize = 18
-keyInput.ClearTextOnFocus = true
-keyInput.Parent = mainFrame
-
--- Submit button
-local submitButton = Instance.new("TextButton")
-submitButton.Size = UDim2.new(1, -20, 0, 40)
-submitButton.Position = UDim2.new(0, 10, 0, 110)
-submitButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-submitButton.TextColor3 = Color3.new(1, 1, 1)
-submitButton.Text = "Submit"
-submitButton.Font = Enum.Font.SourceSansBold
-submitButton.TextSize = 20
-submitButton.Parent = mainFrame
-
--- UI Buttons (hidden until access)
-local universalButton = Instance.new("TextButton")
-universalButton.Size = UDim2.new(0, 100, 0, 30)
-universalButton.Position = UDim2.new(0, 10, 0, 160)
-universalButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-universalButton.TextColor3 = Color3.new(1, 1, 1)
-universalButton.Text = "Universal"
-universalButton.Font = Enum.Font.SourceSans
-universalButton.TextSize = 18
-universalButton.Visible = false
-universalButton.Parent = mainFrame
-
-local gameButton = Instance.new("TextButton")
-gameButton.Size = UDim2.new(0, 260, 0, 30)
-gameButton.Position = UDim2.new(0, 120, 0, 160)
-gameButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-gameButton.TextColor3 = Color3.new(1, 1, 1)
-gameButton.Text = gameName .. " - " .. (isSupported and "Supported" or "Unsupported")
-gameButton.Font = Enum.Font.SourceSans
-gameButton.TextSize = 18
-gameButton.Visible = false
-gameButton.Parent = mainFrame
-
--- Response text
-local responseLabel = Instance.new("TextLabel")
-responseLabel.Size = UDim2.new(1, -20, 0, 60)
-responseLabel.Position = UDim2.new(0, 10, 0, 200)
-responseLabel.BackgroundTransparency = 1
-responseLabel.TextColor3 = Color3.new(1, 1, 1)
-responseLabel.TextWrapped = true
-responseLabel.Text = ""
-responseLabel.Font = Enum.Font.SourceSans
-responseLabel.TextSize = 16
-responseLabel.Visible = false
-responseLabel.Parent = mainFrame
-
--- Skibidi Hub Button (Universal tab)
-local skibidiButton = Instance.new("TextButton")
-skibidiButton.Size = UDim2.new(1, -20, 0, 40)
-skibidiButton.Position = UDim2.new(0, 10, 0, 270)
-skibidiButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-skibidiButton.TextColor3 = Color3.new(1, 1, 1)
-skibidiButton.Text = "Skibidi Hub"
-skibidiButton.Font = Enum.Font.SourceSansBold
-skibidiButton.TextSize = 20
-skibidiButton.Visible = false
-skibidiButton.Parent = mainFrame
-
--- BelugaWare Button (for KAT)
-local belugaButton = Instance.new("TextButton")
-belugaButton.Size = UDim2.new(1, -20, 0, 40)
-belugaButton.Position = UDim2.new(0, 10, 0, 270)
-belugaButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-belugaButton.TextColor3 = Color3.new(1, 1, 1)
-belugaButton.Text = "BelugaWare"
-belugaButton.Font = Enum.Font.SourceSansBold
-belugaButton.TextSize = 20
-belugaButton.Visible = false
-belugaButton.Parent = mainFrame
-
--- Script runners
-skibidiButton.MouseButton1Click:Connect(function()
-	pcall(function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/aemos2/Skibidihub/refs/heads/main/SkibidiHUB.txt"))()
-	end)
-end)
-
-belugaButton.MouseButton1Click:Connect(function()
-	pcall(function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/scripter1cursed1rade/BelugaWare-1.4/main/belugaware.lua"))()
-	end)
-end)
-
--- Tab switching
-universalButton.MouseButton1Click:Connect(function()
-	responseLabel.Text = "Sorry, nothing here (yet)."
-	responseLabel.Visible = true
-	skibidiButton.Visible = true
-	belugaButton.Visible = false
-end)
-
-gameButton.MouseButton1Click:Connect(function()
-	if isSupported then
-		responseLabel.Text = "Sorry, nothing here (yet)."
-	else
-		responseLabel.Text = "This game is unsupported, although you can check out universal scripts!"
-	end
-	responseLabel.Visible = true
-	skibidiButton.Visible = false
-	belugaButton.Visible = false
-	if placeId == "621129760" then -- KAT
-		belugaButton.Visible = true
-	end
-end)
-
--- Key check
-submitButton.MouseButton1Click:Connect(function()
-	if keyInput.Text == "unanchoredClub" then
-		titleLabel.Text = "unanchoredgui - " .. gameName
-		titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-		keyInput:Destroy()
-		submitButton:Destroy()
-		universalButton.Visible = true
-		gameButton.Visible = true
-	else
-		titleLabel.Text = "Incorrect Key"
-		titleLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-	end
-end)
+local message = Instance.new("TextLabel")
+message.Size = UDim2.new(1, 0, 1, 0)
+message.Position = UDim2.new(0, 0, 0, 0)
+message.BackgroundTransparency = 1
+message.Text = "Sorry, you do not have access to this"
+message.TextColor3 = Color3.new(1, 0, 0) -- Red
+message.TextScaled = true
+message.Font = Enum.Font.Legacy -- Serif-like font
+message.Parent = background
