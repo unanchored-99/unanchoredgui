@@ -1,65 +1,238 @@
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Create a new ScreenGui
+local supportedGamesUrl = "https://raw.githubusercontent.com/unanchored-99/unanchoredgui/refs/heads/main/supported_games.json"
+
+local function fetchSupportedGames()
+	local success, data = pcall(function()
+		return game:HttpGet(supportedGamesUrl)
+	end)
+	if success then
+		local parsed = HttpService:JSONDecode(data)
+		return parsed
+	else
+		warn("Failed to fetch supported games list")
+		return {}
+	end
+end
+
+local supportedGames = fetchSupportedGames()
+
+local placeIdStr = tostring(game.PlaceId)
+local isSupported = supportedGames[placeIdStr] ~= nil
+
+local actualGameName
+local success, productInfo = pcall(function()
+	return MarketplaceService:GetProductInfo(game.PlaceId)
+end)
+if success and productInfo then
+	actualGameName = productInfo.Name
+else
+	actualGameName = game.Name
+end
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "KeySystemGui"
 screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
 
--- Create a main frame with a red background
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 300, 0, 200)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-mainFrame.BackgroundColor3 = Color3.new(0.5, 0, 0) -- Red
+mainFrame.Size = UDim2.new(0, 420, 0, 350)
+mainFrame.Position = UDim2.new(0.5, -210, 0.5, -175)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+mainFrame.BackgroundTransparency = 0.2
+mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
--- Create a title label
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 12)
+mainCorner.Parent = mainFrame
+
 local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, 0, 0, 50)
-titleLabel.Position = UDim2.new(0, 0, 0, 0)
-titleLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-titleLabel.TextColor3 = Color3.new(1, 1, 1)
-titleLabel.Text = "Enter Key"
-titleLabel.TextSize = 24
-titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Size = UDim2.new(1, -20, 0, 40)
+titleLabel.Position = UDim2.new(0, 10, 0, 10)
+titleLabel.BackgroundTransparency = 1
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Text = "🔑 Enter Key"
+titleLabel.TextSize = 20
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.Parent = mainFrame
 
--- Create a text box for the key input
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Size = UDim2.new(1, -20, 0, 45)
+buttonContainer.Position = UDim2.new(0, 10, 0, 60)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Visible = false
+buttonContainer.Parent = mainFrame
+
+local universalButton = Instance.new("TextButton")
+universalButton.Size = UDim2.new(0, 100, 1, 0)
+universalButton.Position = UDim2.new(0, 0, 0, 0)
+universalButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+universalButton.BackgroundTransparency = 0.1
+universalButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+universalButton.Text = "Universal"
+universalButton.TextSize = 18
+universalButton.Font = Enum.Font.GothamBold
+universalButton.Parent = buttonContainer
+
+local universalCorner = Instance.new("UICorner")
+universalCorner.CornerRadius = UDim.new(0, 6)
+universalCorner.Parent = universalButton
+
+local statusButton = Instance.new("TextButton")
+statusButton.Size = UDim2.new(1, -110, 1, 0)
+statusButton.Position = UDim2.new(0, 110, 0, 0)
+statusButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+statusButton.BackgroundTransparency = 0.1
+statusButton.TextColor3 = isSupported and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+statusButton.Text = actualGameName .. " - " .. (isSupported and "Supported" or "Unsupported")
+statusButton.TextSize = 18
+statusButton.Font = Enum.Font.GothamBold
+statusButton.Parent = buttonContainer
+
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 6)
+statusCorner.Parent = statusButton
+
 local keyInput = Instance.new("TextBox")
-keyInput.Size = UDim2.new(1, -20, 0, 50)
-keyInput.Position = UDim2.new(0, 10, 0, 60)
-keyInput.BackgroundColor3 = Color3.new(1, 1, 1)
-keyInput.TextColor3 = Color3.new(0, 0, 0)
-keyInput.PlaceholderText = "Enter key here"
+keyInput.Size = UDim2.new(1, -40, 0, 45)
+keyInput.Position = UDim2.new(0, 20, 0, 120)
+keyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+keyInput.BackgroundTransparency = 0.15
+keyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+keyInput.PlaceholderText = "Type key here..."
+keyInput.Text = ""
 keyInput.TextSize = 20
-keyInput.Font = Enum.Font.SourceSans
+keyInput.Font = Enum.Font.Gotham
+keyInput.ClearTextOnFocus = true
 keyInput.Parent = mainFrame
 
--- Create a submit button
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 8)
+inputCorner.Parent = keyInput
+
 local submitButton = Instance.new("TextButton")
-submitButton.Size = UDim2.new(1, -20, 0, 50)
-submitButton.Position = UDim2.new(0, 10, 0, 120)
-submitButton.BackgroundColor3 = Color3.new(0, 0, 0)
-submitButton.TextColor3 = Color3.new(1, 1, 1)
+submitButton.Size = UDim2.new(1, -40, 0, 45)
+submitButton.Position = UDim2.new(0, 20, 0, 185)
+submitButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+submitButton.BackgroundTransparency = 0.1
+submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 submitButton.Text = "Submit"
-submitButton.TextSize = 24
-submitButton.Font = Enum.Font.SourceSansBold
+submitButton.TextSize = 22
+submitButton.Font = Enum.Font.GothamBold
 submitButton.Parent = mainFrame
 
--- Function to check the key
-local function onSubmit()
-    local enteredKey = keyInput.Text
-    if enteredKey == "guiunlock" then
-        titleLabel.Text = "Access Granted"
-        titleLabel.TextColor3 = Color3.new(0, 1, 0)
-        keyInput:Destroy()
-        submitButton:Destroy()
-    else
-        titleLabel.Text = "Incorrect Key"
-        titleLabel.TextColor3 = Color3.new(1, 0, 0)
-    end
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = submitButton
+
+local messageLabel = Instance.new("TextLabel")
+messageLabel.Size = UDim2.new(1, -40, 0, 80)
+messageLabel.Position = UDim2.new(0, 20, 0, 250)
+messageLabel.BackgroundTransparency = 1
+messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+messageLabel.TextWrapped = true
+messageLabel.TextYAlignment = Enum.TextYAlignment.Top
+messageLabel.Font = Enum.Font.Gotham
+messageLabel.TextSize = 18
+messageLabel.Text = ""
+messageLabel.Parent = mainFrame
+messageLabel.Visible = false
+
+-- New button container for Universal sub-buttons (like Skibidi Hub)
+local universalSubButtons = Instance.new("Frame")
+universalSubButtons.Size = UDim2.new(1, -40, 0, 45)
+universalSubButtons.Position = UDim2.new(0, 20, 0, 250)
+universalSubButtons.BackgroundTransparency = 1
+universalSubButtons.Visible = false
+universalSubButtons.Parent = mainFrame
+
+local skibidiButton = Instance.new("TextButton")
+skibidiButton.Size = UDim2.new(0, 120, 1, 0)
+skibidiButton.Position = UDim2.new(0, 0, 0, 0)
+skibidiButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+skibidiButton.BackgroundTransparency = 0.1
+skibidiButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+skibidiButton.Text = "Skibidi Hub"
+skibidiButton.TextSize = 18
+skibidiButton.Font = Enum.Font.GothamBold
+skibidiButton.Parent = universalSubButtons
+
+local skibidiCorner = Instance.new("UICorner")
+skibidiCorner.CornerRadius = UDim.new(0, 6)
+skibidiCorner.Parent = skibidiButton
+
+local function setActiveButton(activeBtn)
+	universalButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	statusButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	activeBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+
+	-- Show or hide Skibidi Hub button depending on active button
+	if activeBtn == universalButton then
+		universalSubButtons.Visible = true
+		messageLabel.Position = UDim2.new(0, 20, 0, 305)
+	else
+		universalSubButtons.Visible = false
+		messageLabel.Position = UDim2.new(0, 20, 0, 250)
+	end
 end
 
--- Connect the button
+local function showButtons()
+	buttonContainer.Visible = true
+	setActiveButton(universalButton)
+	messageLabel.Visible = true
+end
+
+local function resetMessage()
+	keyInput.TextEditable = true
+	keyInput.Text = ""
+	messageLabel.Visible = false
+end
+
+local function onSubmit()
+	local enteredKey = keyInput.Text
+	if enteredKey == "unanchoredClub" then
+		titleLabel.Text = "unanchoredgui - " .. actualGameName
+		titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		keyInput:Destroy()
+		submitButton:Destroy()
+		showButtons()
+		messageLabel.Text = "Sorry, nothing here (yet)"
+	else
+		titleLabel.Text = "❌ Incorrect Key"
+		titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		resetMessage()
+	end
+end
+
 submitButton.MouseButton1Click:Connect(onSubmit)
+
+universalButton.MouseButton1Click:Connect(function()
+	setActiveButton(universalButton)
+	messageLabel.Text = "Sorry, nothing here (yet)"
+end)
+
+statusButton.MouseButton1Click:Connect(function()
+	setActiveButton(statusButton)
+	if isSupported then
+		messageLabel.Text = "Sorry, nothing here (yet)"
+	else
+		messageLabel.Text = "This game is unsupported, although you can check out universal scripts!"
+	end
+end)
+
+skibidiButton.MouseButton1Click:Connect(function()
+	-- Run the Skibidi Hub script
+	local success, err = pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/aemos2/Skibidihub/refs/heads/main/SkibidiHUB.txt"))()
+	end)
+	if not success then
+		messageLabel.Text = "Failed to load Skibidi Hub: " .. tostring(err)
+	end
+end)
