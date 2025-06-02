@@ -1,4 +1,4 @@
-# NOTE: NOT FINISHED YET
+# NOTE: NOT FINISHED YET, ACCESS CLOSED
 ------------------------------------------------------
 # unanchoredgui
 unanchoredgui, a roblox script hub
