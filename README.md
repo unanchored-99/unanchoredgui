@@ -1,4 +1,4 @@
-# NOTE: NOT FINISHED YET, ACCESS CLOSED
+# NOTE: STILL WIP
 ------------------------------------------------------
 # unanchoredgui
 unanchoredgui, a roblox exploit hub. To buy the premium version, go onto my discord (https://discord.gg/2hnNrtYtmy) and create a ticket to purchase it.
