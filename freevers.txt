@@ -19,7 +19,6 @@ local UICornerMain = Instance.new("UICorner")
 UICornerMain.CornerRadius = UDim.new(0, 12)
 UICornerMain.Parent = MainFrame
 
--- Sidebar
 local Sidebar = Instance.new("ScrollingFrame")
 Sidebar.Name = "Sidebar"
 Sidebar.Size = UDim2.new(0, 100, 1, 0)
@@ -35,7 +34,6 @@ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 6)
 UIListLayout.Parent = Sidebar
 
--- Content Frame
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Name = "ContentFrame"
 ContentFrame.Position = UDim2.new(0, 100, 0, 0)
@@ -43,7 +41,6 @@ ContentFrame.Size = UDim2.new(1, -100, 1, 0)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.Parent = MainFrame
 
--- Tabs and buttons data
 local tabs = {
     ["Universal"] = {
         {Name = "FE Fling All", Script = 'loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()'},
@@ -57,7 +54,6 @@ local tabs = {
     }
 }
 
--- Helper function to create a sidebar tab button with rounded outer corners and centered horizontally
 local function createTab(tabName, scripts)
     local OuterFrame = Instance.new("Frame")
     OuterFrame.Size = UDim2.new(1, 0, 0, 40)
@@ -112,7 +108,6 @@ local function createTab(tabName, scripts)
     end)
 end
 
--- Create tabs
 for tabName, scripts in pairs(tabs) do
     createTab(tabName, scripts)
 end
