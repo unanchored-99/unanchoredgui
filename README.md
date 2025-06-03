@@ -1,11 +1,11 @@
 # NOTE: NOT FINISHED YET, ACCESS CLOSED
 ------------------------------------------------------
 # unanchoredgui
-unanchoredgui, a roblox script hub
-NOTE: DONT GET MAD THAT YOU LITTLE RASCALS WONT GET FULL BENEFITS, PREMIUM VERSION ONLY ALLOWED FOR MEMBERS OF unanchored club
+unanchoredgui, a roblox exploit hub. To buy the premium version, go onto my Discord and create a ticket to purchase it.
 
 # How to use
 Get your preferred executor (known to work with xeno 1.21) and paste this in:
 
+FREE:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/unanchored-99/unanchoredgui/refs/heads/main/unanchoredgui.txt"))()
