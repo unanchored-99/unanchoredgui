@@ -1,0 +1,118 @@
+local player = game.Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "UnanchoredGUI_Free"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 440, 0, 320)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+local UICornerMain = Instance.new("UICorner")
+UICornerMain.CornerRadius = UDim.new(0, 12)
+UICornerMain.Parent = MainFrame
+
+-- Sidebar
+local Sidebar = Instance.new("ScrollingFrame")
+Sidebar.Name = "Sidebar"
+Sidebar.Size = UDim2.new(0, 100, 1, 0)
+Sidebar.Position = UDim2.new(0, 0, 0, 0)
+Sidebar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Sidebar.ScrollBarThickness = 4
+Sidebar.CanvasSize = UDim2.new(0, 0, 1, 0)
+Sidebar.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Sidebar.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 6)
+UIListLayout.Parent = Sidebar
+
+-- Content Frame
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Position = UDim2.new(0, 100, 0, 0)
+ContentFrame.Size = UDim2.new(1, -100, 1, 0)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = MainFrame
+
+-- Tabs and buttons data
+local tabs = {
+    ["Universal"] = {
+        {Name = "FE Fling All", Script = 'loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()'},
+        {Name = "Infinite Yield", Script = "loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()"},
+        {Name = "Kawaii Freaky Fling", Script = 'pcall(function()\nloadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua",true))()\nend)'},
+        {Name = "Nameless Admin", Script = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source.lua"))()'}
+    },
+    ["Other Hubs"] = {
+        {Name = "Orca Hub", Script = 'loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/richie0866/orca/master/public/latest.lua"))()'},
+        {Name = "Skibidi Hub", Script = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/aemos2/Skibidihub/refs/heads/main/SkibidiHUB.txt"))()'}
+    }
+}
+
+-- Helper function to create a sidebar tab button with rounded outer corners and centered horizontally
+local function createTab(tabName, scripts)
+    local OuterFrame = Instance.new("Frame")
+    OuterFrame.Size = UDim2.new(1, 0, 0, 40)
+    OuterFrame.BackgroundTransparency = 1
+    OuterFrame.Parent = Sidebar
+
+    local TabButton = Instance.new("TextButton")
+    TabButton.Size = UDim2.new(0.9, 0, 1, 0)
+    TabButton.Position = UDim2.new(0.05, 0, 0, 0)
+    TabButton.Text = tabName
+    TabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.Font = Enum.Font.SourceSans
+    TabButton.TextSize = 18
+    TabButton.BorderSizePixel = 0
+    TabButton.Parent = OuterFrame
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = TabButton
+
+    TabButton.MouseButton1Click:Connect(function()
+        for _, child in ipairs(ContentFrame:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+
+        table.sort(scripts, function(a, b)
+            return a.Name < b.Name
+        end)
+
+        for i, entry in ipairs(scripts) do
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0.9, 0, 0, 40)
+            btn.Position = UDim2.new(0.05, 0, 0, 15 + (i - 1) * 50)
+            btn.Text = entry.Name
+            btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.Font = Enum.Font.SourceSans
+            btn.TextSize = 16
+            btn.BorderSizePixel = 0
+            btn.Parent = ContentFrame
+
+            local corner = Instance.new("UICorner", btn)
+            corner.CornerRadius = UDim.new(0, 6)
+
+            btn.MouseButton1Click:Connect(function()
+                loadstring(entry.Script)()
+            end)
+        end
+    end)
+end
+
+-- Create tabs
+for tabName, scripts in pairs(tabs) do
+    createTab(tabName, scripts)
+end
